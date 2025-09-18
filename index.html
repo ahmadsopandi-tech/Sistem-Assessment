@@ -12,6 +12,7 @@
             --accent-color: #28a745;
             --danger-color: #dc3545;
             --info-color: #17a2b8;
+            --warning-color: #ffc107;
             --text-color: #333;
             --border-color: #ddd;
             --shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -25,7 +26,7 @@
             padding: 0;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 30px auto;
             background: #fff;
             padding: 30px;
@@ -64,7 +65,7 @@
             box-sizing: border-box;
             transition: border-color 0.3s;
         }
-        textarea:focus, input:focus {
+        textarea:focus, input:focus, select:focus {
             border-color: var(--primary-color);
             outline: none;
         }
@@ -145,13 +146,6 @@
             margin: 20px 0;
             border-radius: 5px;
         }
-        .evaluation-box {
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            margin-top: 15px;
-            background-color: #fdfdfd;
-            border-radius: 6px;
-        }
         .status-badge {
             padding: 6px 12px;
             border-radius: 20px;
@@ -160,7 +154,7 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .status-pending { background-color: #ffc107; color: #333; }
+        .status-pending { background-color: var(--warning-color); color: #333; }
         .status-rejected { background-color: var(--danger-color); }
         .status-accepted-t2 { background-color: var(--info-color); }
         .status-accepted-role { background-color: var(--accent-color); }
@@ -186,14 +180,15 @@
             font-weight: bold;
             color: var(--accent-color);
         }
-        .simulated-result {
+        .result-box {
             background-color: #e8f5e9;
             border: 1px solid var(--accent-color);
             padding: 15px;
             border-radius: 6px;
             margin-top: 15px;
+            text-align: center;
         }
-        .simulated-result h4 {
+        .result-box h4 {
             margin-top: 0;
             color: var(--accent-color);
         }
@@ -201,7 +196,20 @@
             color: var(--danger-color);
             font-size: 0.9em;
             margin-top: 10px;
-            display: none; /* Di-hide secara default */
+            display: none;
+        }
+        .announcement-table-section {
+            margin-top: 30px;
+        }
+        .announcement-table-section h3 {
+            color: var(--info-color);
+        }
+        .role-badge {
+            background-color: #6f42c1;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
         }
     </style>
 </head>
@@ -253,7 +261,7 @@
 
             <div class="form-section">
                 <h2>Pertanyaan Kepemimpinan (Essay)</h2>
-                <div class="question-block"><label>1. Menurut Anda, apa perbedaan mendasar antara menjadi seorang *pemimpin* (leader) dan seorang *pemimpin* (boss)? Dalam konteks komunitas sukarela seperti Pionir Asa, manakah yang lebih dibutuhkan dan mengapa? Berikan contoh perilaku dari masing-masing peran tersebut.</label><textarea name="lead_1" required></textarea></div>
+                <div class="question-block"><label>1. Menurut Anda, apa perbedaan mendasar antara menjadi seorang *pemimpin* (leader) dan seorang *bos* (boss)? Dalam konteks komunitas sukarela seperti Pionir Asa, manakah yang lebih dibutuhkan dan mengapa? Berikan contoh perilaku dari masing-masing peran tersebut.</label><textarea name="lead_1" required></textarea></div>
                 <div class="question-block"><label>2. Bayangkan Anda adalah seorang koordinator divisi dan Anda memiliki sebuah ide untuk program baru yang Anda yakini akan sangat bermanfaat. Namun, ketika Anda mempresentasikannya kepada tim, sebagian besar anggota menunjukkan keraguan atau bahkan menolak ide tersebut. Langkah-langkah apa yang akan Anda lakukan untuk memimpin tim melalui situasi ini?</label><textarea name="lead_2" required></textarea></div>
                 <div class="question-block"><label>3. Seorang pemimpin juga harus mampu mengembangkan orang lain. Jika Anda diberi tanggung jawab atas seorang anggota baru yang masih sangat pemula dan kurang percaya diri, bagaimana pendekatan Anda untuk membimbing, mengembangkan kemampuan, dan membangun kepercayaan dirinya?</label><textarea name="lead_3" required></textarea></div>
                 <div class="question-block"><label>4. "Kegagalan delegasi adalah salah satu penyebab utama kelelahan seorang pemimpin." Setujukah Anda dengan pernyataan ini? Jelaskan alasan Anda dan ceritakan bagaimana Anda akan memastikan tugas-tugas dapat didelegasikan dengan efektif dan adil kepada anggota tim Anda.</label><textarea name="lead_4" required></textarea></div>
@@ -283,7 +291,7 @@
 
         <div class="card">
             <h2>Pengelolaan Pengumuman</h2>
-            <p>Buat atau perbarui pengumuman yang akan dilihat oleh peserta.</p>
+            <p>Buat atau perbarui teks pengumuman yang akan muncul di atas tabel hasil.</p>
             <label for="announcementText">Teks Pengumuman:</label>
             <textarea id="announcementText" rows="4" placeholder="Tulis pengumuman di sini..."></textarea>
             <button onclick="saveAnnouncement()">Simpan Pengumuman</button>
@@ -292,16 +300,16 @@
         <div class="card">
             <h2>Daftar Peserta & Penilaian</h2>
             <table id="participantTable">
-                <thead><tr><th>Nama</th><th>Email</th><th>Total Nilai</th><th>Status</th><th>Aksi</th></tr></thead>
-                <tbody id="participantTableBody"><tr><td colspan="5" class="loading">Memuat data...</td></tr></tbody>
+                <thead><tr><th>Nama</th><th>Email</th><th>Total Nilai</th><th>Status</th><th>Jabatan</th><th>Aksi</th></tr></thead>
+                <tbody id="participantTableBody"><tr><td colspan="6" class="loading">Memuat data...</td></tr></tbody>
             </table>
         </div>
         
         <div class="card">
             <h2>Dashboard Top 10 Peserta</h2>
             <table id="topTenTable">
-                <thead><tr><th>Peringkat</th><th>Nama</th><th>Total Nilai</th><th>Status</th></tr></thead>
-                <tbody id="topTenTableBody"><tr><td colspan="4" class="loading">Memuat data...</td></tr></tbody>
+                <thead><tr><th>Peringkat</th><th>Nama</th><th>Total Nilai</th><th>Status</th><th>Jabatan</th></tr></thead>
+                <tbody id="topTenTableBody"><tr><td colspan="5" class="loading">Memuat data...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -312,226 +320,201 @@
         <div id="announcementDisplay" class="announcement-box">
             <p class="loading">Memuat pengumuman...</p>
         </div>
-        <p style="text-align: center;">Cek pengumuman secara berkala. Terima kasih atas partisipasi Anda.</p>
+
+        <div class="announcement-table-section">
+            <h3>Hasil Penilaian Seluruh Peserta</h3>
+            <table id="publicResultTable">
+                <thead><tr><th>Nama</th><th>Total Nilai</th><th>Status Kelulusan</th><th>Jabatan (Jika Lolos)</th></tr></thead>
+                <tbody id="publicResultTableBody"><tr><td colspan="4" class="loading">Memuat data...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div class="announcement-table-section">
+            <h3>10 Peserta dengan Nilai Tertinggi</h3>
+            <table id="publicTopTenTable">
+                <thead><tr><th>Peringkat</th><th>Nama</th><th>Total Nilai</th><th>Status Kelulusan</th><th>Jabatan (Jika Lolos)</th></tr></thead>
+                <tbody id="publicTopTenTableBody"><tr><td colspan="5" class="loading">Memuat data...</td></tr></tbody>
+            </table>
+        </div>
+
+        <p style="text-align: center; margin-top: 30px;">Cek pengumuman secara berkala. Terima kasih atas partisipasi Anda.</p>
         <button onclick="showLandingPage()">Kembali ke Halaman Utama</button>
     </div>
 
 <script>
     // --- KONFIGURASI & DATA ---
-    // NOTE: Ini adalah simulasi. Data tersimpan di localStorage browser.
-    const STORAGE_KEY_PARTICIPANTS = 'asajiwa_participants_v2';
-    const STORAGE_KEY_ANNOUNCEMENT = 'asajiwa_announcement_v2';
-    
-    // --- KREDENSIAL ADMIN ---
+    const STORAGE_KEY_PARTICIPANTS = 'asajiwa_participants_v3';
+    const STORAGE_KEY_ANNOUNCEMENT = 'asajiwa_announcement_v3';
     const ADMIN_EMAIL = "asajiwafoundation@gmail.com";
     const ADMIN_PASSWORD = "ASAJIWAFOUNDATION";
+    const AVAILABLE_ROLES = ["Public Relations & Media", "Program & Edukasi", "Volunteer & Relawan", "Kreatif & Desain", "Fundraising & Kemitraan"];
 
     // --- FUNGSI UTILITAS ---
     function showPage(pageId) {
         document.querySelectorAll('.container').forEach(page => page.classList.add('hidden'));
         document.getElementById(pageId).classList.remove('hidden');
     }
-
-    function saveToLocalStorage(key, data) {
-        localStorage.setItem(key, JSON.stringify(data));
-    }
-
-    function loadFromLocalStorage(key, defaultValue = null) {
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : defaultValue;
-    }
+    function saveToLocalStorage(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+    function loadFromLocalStorage(key, defaultValue = null) { const data = localStorage.getItem(key); return data ? JSON.parse(data) : defaultValue; }
     
     // --- FUNGSI HALAMAN UTAMA (LANDING PAGE) ---
     function showLandingPage() {
         showPage('landingPage');
-        document.getElementById('loginError').style.display = 'none'; // Sembunyikan error saat kembali ke landing
+        document.getElementById('loginError').style.display = 'none';
         document.getElementById('adminEmailInput').value = '';
         document.getElementById('adminPasswordInput').value = '';
     }
-
     function adminLogin() {
         const email = document.getElementById('adminEmailInput').value;
         const password = document.getElementById('adminPasswordInput').value;
         const errorDiv = document.getElementById('loginError');
-
-        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-            alert('Login Admin Berhasil! Selamat datang di Dashboard.');
-            loadAdminDashboard();
-        } else {
-            errorDiv.style.display = 'block'; // Tampilkan pesan error
-        }
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) { alert('Login Admin Berhasil!'); loadAdminDashboard(); }
+        else { errorDiv.style.display = 'block'; }
     }
+    function showParticipantForm() { showPage('participantFormPage'); }
+    function showAnnouncementPage() { renderAnnouncementPage(); showPage('announcementPage'); }
 
-    function showParticipantForm() {
-        showPage('participantFormPage');
-    }
-    
-    function showAnnouncementPage() {
-        showPage('announcementPage');
-        const announcement = loadFromLocalStorage(STORAGE_KEY_ANNOUNCEMENT, 'Belum ada pengumuman terkini.');
-        document.getElementById('announcementDisplay').innerHTML = `<p>${announcement.replace(/\n/g, '<br>')}</p>`;
-    }
-
-    // --- FUNGSI FORM PESERTA & SIMULASI PENILAIAN OTOMATIS ---
+    // --- FUNGSI FORM PESERTA & SIMULASI PENILAIAN ---
     document.getElementById('assessmentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
         const formData = new FormData(e.target);
         const participantData = {
-            id: Date.now(),
-            name: formData.get('participantName'),
-            email: formData.get('participantEmail'),
-            answers: {},
-            scores: { psy: 0, lead: 0, cont: 0, total: 0 },
-            status: 'pending',
-            evaluated: false
+            id: Date.now(), name: formData.get('participantName'), email: formData.get('participantEmail'),
+            answers: {}, scores: { psy: 0, lead: 0, cont: 0, total: 0 },
+            status: 'pending', evaluated: false, role: null
         };
-
-        for (let [key, value] of formData.entries()) {
-            if (key !== 'participantName' && key !== 'participantEmail') {
-                participantData.answers[key] = value;
-            }
-        }
-
-        // --- SIMULASI PROSES PENILAIAN OTOMATIS ---
-        alert('Sedang memproses jawaban Anda dengan AI... (Ini adalah simulasi)');
+        for (let [key, value] of formData.entries()) { if (key !== 'participantName' && key !== 'participantEmail') participantData.answers[key] = value; }
         
+        alert('Sedang memproses jawaban Anda...');
         const submitButton = e.target.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerText;
-        submitButton.innerText = 'Memproses...';
-        submitButton.disabled = true;
-
+        const originalText = submitButton.innerText; submitButton.innerText = 'Memproses...'; submitButton.disabled = true;
         await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
         
-        // --- HASIL SIMULASI (NILAI ACAK) ---
-        participantData.scores.psy = Math.floor(Math.random() * 41) + 60; // 60-100
-        participantData.scores.lead = Math.floor(Math.random() * 41) + 60; // 60-100
-        participantData.scores.cont = Math.floor(Math.random() * 41) + 60; // 60-100
+        participantData.scores.psy = Math.floor(Math.random() * 41) + 60;
+        participantData.scores.lead = Math.floor(Math.random() * 41) + 60;
+        participantData.scores.cont = Math.floor(Math.random() * 41) + 60;
         participantData.scores.total = participantData.scores.psy + participantData.scores.lead + participantData.scores.cont;
         participantData.evaluated = true;
 
         const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
-        participants.push(participantData);
-        saveToLocalStorage(STORAGE_KEY_PARTICIPANTS, participants);
+        participants.push(participantData); saveToLocalStorage(STORAGE_KEY_PARTICIPANTS, participants);
 
-        submitButton.innerText = originalText;
-        submitButton.disabled = false;
-
-        const resultDiv = document.createElement('div');
-        resultDiv.className = 'simulated-result';
-        resultDiv.innerHTML = `
-            <h4>Hasil Penilaian Simulasi (Otomatis)</h4>
-            <p><strong>Nilai Psikologi:</strong> ${participantData.scores.psy}</p>
-            <p><strong>Nilai Kepemimpinan:</strong> ${participantData.scores.lead}</p>
-            <p><strong>Nilai Kontribusi:</strong> ${participantData.scores.cont}</p>
-            <p class="top-score"><strong>Total Nilai:</strong> ${participantData.scores.total}</p>
-            <p>Jawaban Anda telah disimpan. Admin akan segera mengupdate status kelulusan Anda.</p>
-        `;
-        e.target.appendChild(resultDiv);
-        e.target.querySelector('button[type="submit"]').disabled = true;
+        submitButton.innerText = originalText; submitButton.disabled = false;
+        const resultDiv = document.createElement('div'); resultDiv.className = 'result-box';
+        resultDiv.innerHTML = `<h4>Terima Kasih!</h4><p>Jawaban Anda telah berhasil dikirim dan dinilai. Hasil akan diumumkan melalui halaman pengumuman.</p><p><strong>Good luck!</strong></p>`;
+        e.target.appendChild(resultDiv); e.target.querySelector('button[type="submit"]').disabled = true;
     });
 
     // --- FUNGSI DASHBOARD ADMIN ---
-    function loadAdminDashboard() {
-        showPage('adminDashboardPage');
-        renderParticipantTable();
-        renderTopTenTable();
-        loadAnnouncementForAdmin();
-    }
+    function loadAdminDashboard() { showPage('adminDashboardPage'); renderParticipantTable(); renderTopTenTable(); loadAnnouncementForAdmin(); }
     
     function renderParticipantTable() {
         const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
-        const tbody = document.getElementById('participantTableBody');
-        tbody.innerHTML = '';
-        if (participants.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada data peserta.</td></tr>';
-            return;
-        }
+        const tbody = document.getElementById('participantTableBody'); tbody.innerHTML = '';
+        if (participants.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada data peserta.</td></tr>'; return; }
         participants.forEach(p => {
             const row = tbody.insertRow();
             row.innerHTML = `
-                <td>${p.name}</td>
-<td>${p.email}</td>
-                <td>${p.evaluated ? p.scores.total : 'Belum Dinilai'}</td>
+                <td>${p.name}</td><td>${p.email}</td><td>${p.evaluated ? p.scores.total : 'Belum Dinilai'}</td>
                 <td><span class="status-badge status-${p.status}">${getStatusText(p.status)}</span></td>
-                <td><button onclick="updateStatus(${p.id})">Update Status</button></td>
+                <td>${p.role ? `<span class="role-badge">${p.role}</span>` : '-'}</td>
+                <td><button onclick="updateStatus(${p.id})">Update Status</button> <button onclick="deleteParticipant(${p.id})" class="danger">Hapus</button></td>
             `;
         });
     }
     
     function renderTopTenTable() {
         const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
-        const evaluatedParticipants = participants
-            .filter(p => p.evaluated)
-            .sort((a, b) => b.scores.total - a.scores.total)
-            .slice(0, 10);
-
-        const tbody = document.getElementById('topTenTableBody');
-        tbody.innerHTML = '';
-        if (evaluatedParticipants.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Belum ada peserta yang dinilai.</td></tr>';
-            return;
-        }
+        const evaluatedParticipants = participants.filter(p => p.evaluated).sort((a, b) => b.scores.total - a.scores.total).slice(0, 10);
+        const tbody = document.getElementById('topTenTableBody'); tbody.innerHTML = '';
+        if (evaluatedParticipants.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada peserta yang dinilai.</td></tr>'; return; }
         evaluatedParticipants.forEach((p, index) => {
             const row = tbody.insertRow();
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${p.name}</td>
-                <td>${p.scores.total}</td>
-                <td><span class="status-badge status-${p.status}">${getStatusText(p.status)}</span></td>
-            `;
+            row.innerHTML = `<td>${index + 1}</td><td>${p.name}</td><td>${p.scores.total}</td><td><span class="status-badge status-${p.status}">${getStatusText(p.status)}</span></td><td>${p.role ? `<span class="role-badge">${p.role}</span>` : '-'}</td>`;
         });
     }
 
     function getStatusText(status) {
-        switch(status) {
-            case 'pending': return 'Menunggu';
-            case 'rejected': return 'Tidak Lolos';
-            case 'accepted-t2': return 'Lolos Tahap 2';
-            case 'accepted-role': return 'Lolos Jabatan';
-            default: return 'Unknown';
+        switch(status) { case 'pending': return 'Tertunda'; case 'rejected': return 'Tidak Lolos'; case 'accepted-t2': return 'Diterima (Tahap 2)'; case 'accepted-role': return 'Diterima (Jabatan)'; default: return 'Unknown'; }
+    }
+
+    function saveAnnouncement() { const text = document.getElementById('announcementText').value; saveToLocalStorage(STORAGE_KEY_ANNOUNCEMENT, text); alert('Pengumuman berhasil disimpan!'); }
+    function loadAnnouncementForAdmin() { const announcement = loadFromLocalStorage(STORAGE_KEY_ANNOUNCEMENT, ''); document.getElementById('announcementText').value = announcement; }
+    
+    function deleteParticipant(participantId) {
+        if (confirm("Apakah Anda yakin ingin menghapus data peserta ini? Tindakan ini tidak dapat dibatalkan.")) {
+            let participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
+            participants = participants.filter(p => p.id !== participantId);
+            saveToLocalStorage(STORAGE_KEY_PARTICIPANTS, participants);
+            alert('Peserta berhasil dihapus.');
+            renderParticipantTable(); renderTopTenTable();
         }
     }
 
-    function saveAnnouncement() {
-        const text = document.getElementById('announcementText').value;
-        saveToLocalStorage(STORAGE_KEY_ANNOUNCEMENT, text);
-        alert('Pengumuman berhasil disimpan!');
-    }
-
-    function loadAnnouncementForAdmin() {
-const announcement = loadFromLocalStorage(STORAGE_KEY_ANNOUNCEMENT, '');
-        document.getElementById('announcementText').value = announcement;
-    }
-    
     function updateStatus(participantId) {
         const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
         const participant = participants.find(p => p.id === participantId);
         if (!participant) return;
 
-        const newStatus = prompt(`Update status untuk ${participant.name}.\nKetik salah satu:\n- pending\n- rejected\n- accepted-t2\n- accepted-role`, participant.status);
+        const statusOptions = `Pilih status baru untuk ${participant.name}:\n1. Tertunda (pending)\n2. Tidak Lolos (rejected)\n3. Diterima (Tahap 2) (accepted-t2)\n4. Diterima (Jabatan) (accepted-role)`;
+        const statusChoice = prompt(statusOptions, participant.status);
         
-        if (newStatus && ['pending', 'rejected', 'accepted-t2', 'accepted-role'].includes(newStatus)) {
-            participant.status = newStatus;
-            saveToLocalStorage(STORAGE_KEY_PARTICIPANTS, participants);
-            alert('Status berhasil diperbarui!');
-            renderParticipantTable();
-            renderTopTenTable();
-        } else {
-            alert('Status tidak valid atau dibatalkan.');
+        let newStatus = null;
+        if (statusChoice === '1') newStatus = 'pending';
+        else if (statusChoice === '2') newStatus = 'rejected';
+        else if (statusChoice === '3') newStatus = 'accepted-t2';
+        else if (statusChoice === '4') newStatus = 'accepted-role';
+        else { alert('Pilihan tidak valid atau dibatalkan.'); return; }
+
+        participant.status = newStatus;
+        participant.role = null; // Reset role jika status berubah
+
+        if (newStatus === 'accepted-role') {
+            const roleOptions = AVAILABLE_ROLES.map((role, i) => `${i + 1}. ${role}`).join('\n');
+            const roleChoice = prompt(`Pilih jabatan untuk ${participant.name}:\n${roleOptions}`);
+            const roleIndex = parseInt(roleChoice) - 1;
+            if (roleIndex >= 0 && roleIndex < AVAILABLE_ROLES.length) {
+                participant.role = AVAILABLE_ROLES[roleIndex];
+            } else {
+                alert('Pilihan jabatan tidak valid. Status dibiarkan sebagai Diterima (Tahap 2).');
+                participant.status = 'accepted-t2'; // fallback
+            }
         }
+        
+        saveToLocalStorage(STORAGE_KEY_PARTICIPANTS, participants);
+        alert('Status dan Jabatan berhasil diperbarui!');
+        renderParticipantTable(); renderTopTenTable();
     }
 
-    function logoutAdmin() {
-        alert('Anda telah logout dari halaman Admin.');
-        showLandingPage();
+    function logoutAdmin() { alert('Anda telah logout.'); showLandingPage(); }
+
+    // --- FUNGSI HALAMAN PENGUMUMAN PUBLIK ---
+    function renderAnnouncementPage() {
+        const announcement = loadFromLocalStorage(STORAGE_KEY_ANNOUNCEMENT, 'Belum ada pengumuman terkini.');
+        document.getElementById('announcementDisplay').innerHTML = `<p>${announcement.replace(/\n/g, '<br>')}</p>`;
+        
+        const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
+        
+        // Render Tabel Seluruh Peserta
+        const publicTbody = document.getElementById('publicResultTableBody'); publicTbody.innerHTML = '';
+        if (participants.length === 0) { publicTbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Belum ada data peserta.</td></tr>'; }
+        participants.forEach(p => {
+            const row = publicTbody.insertRow();
+            row.innerHTML = `<td>${p.name}</td><td>${p.evaluated ? p.scores.total : '-'}</td><td><span class="status-badge status-${p.status}">${getStatusText(p.status)}</span></td><td>${p.role ? `<span class="role-badge">${p.role}</span>` : '-'}</td>`;
+        });
+
+        // Render Tabel Top 10
+        const topTenParticipants = participants.filter(p => p.evaluated).sort((a, b) => b.scores.total - a.scores.total).slice(0, 10);
+        const topTenTbody = document.getElementById('publicTopTenTableBody'); topTenTbody.innerHTML = '';
+        if (topTenParticipants.length === 0) { topTenTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada peserta yang dinilai.</td></tr>'; }
+        topTenParticipants.forEach((p, index) => {
+            const row = topTenTbody.insertRow();
+            row.innerHTML = `<td>${index + 1}</td><td>${p.name}</td><td>${p.scores.total}</td><td><span class="status-badge status-${p.status}">${getStatusText(p.status)}</span></td><td>${p.role ? `<span class="role-badge">${p.role}</span>` : '-'}</td>`;
+        });
     }
 
     // --- INISIALISASI AWAL ---
-    if (!localStorage.getItem(STORAGE_KEY_ANNOUNCEMENT)) {
-        saveToLocalStorage(STORAGE_KEY_ANNOUNCEMENT, "Selamat datang calon pengurus! Hasil assessment akan diumumkan melalui halaman ini. Pantau terus ya!");
-    }
-
+    if (!localStorage.getItem(STORAGE_KEY_ANNOUNCEMENT)) { saveToLocalStorage(STORAGE_KEY_ANNOUNCEMENT, "Pengumuman resmi hasil assessment calon pengurus akan ditampilkan di sini. Silakan cek secara berkala."); }
 </script>
 
 </body>
