@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Assessment Asa Jiwa Foundation</title>
+    <style>
+        /* --- CSS untuk seluruh aplikasi --- */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #f4f4f4;
+            --accent-color: #28a745;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        h1, h2, h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        h1 { text-align: center; }
+        .form-section, .card {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fdfdfd;
+        }
+        .question-block {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        textarea, input[type="text"], input[type="password"], input[type="email"], select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        textarea:focus, input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+        button {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+        button:hover {
+            background: #004494;
+            transform: translateY(-2px);
+        }
+        button.danger {
+            background: var(--danger-color);
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        button.success {
+            background: var(--accent-color);
+        }
+        button.success:hover {
+            background: #218838;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .auth-form, .participant-start-form {
+            text-align: center;
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .auth-form input, .auth-form button {
+            width: 90%;
+            margin: 8px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+        }
+        th, td {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .announcement-box {
+            background-color: #e7f3fe;
+            border-left: 6px solid var(--primary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .evaluation-box {
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin-top: 15px;
+            background-color: #fdfdfd;
+            border-radius: 6px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pending { background-color: #ffc107; color: #333; }
+        .status-rejected { background-color: var(--danger-color); }
+        .status-accepted-t2 { background-color: var(--info-color); }
+        .status-accepted-role { background-color: var(--accent-color); }
+        .loading {
+            text-align: center;
+            font-style: italic;
+            color: #777;
+        }
+        .admin-nav {
+            background: var(--secondary-color);
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-nav button {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        .top-score {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        .simulated-result {
+            background-color: #e8f5e9;
+            border: 1px solid var(--accent-color);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        .simulated-result h4 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+        .login-error {
+            color: var(--danger-color);
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none; /* Di-hide secara default */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VIEW 1: Halaman Utama (Login / Mulai) -->
+    <div id="landingPage" class="container">
+        <h1>Sistem Assessment Calon Pengurus</h1>
+        <p style="text-align: center; font-size: 1.1em; color: #666;">Selamat datang di sistem penilaian online Asa Jiwa Foundation. Silakan pilih peran Anda.</p>
+        
+        <div class="auth-form">
+            <h2>Area Admin Internal</h2>
+            <p style="font-size: 0.9em; color: #888;">Hanya untuk panitia internal Asa Jiwa Foundation</p>
+            <input type="email" id="adminEmailInput" placeholder="Email Admin" required>
+            <input type="password" id="adminPasswordInput" placeholder="Password Admin" required>
+            <button onclick="adminLogin()">Masuk sebagai Admin</button>
+            <div id="loginError" class="login-error">Email atau Password salah!</div>
+        </div>
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid var(--border-color);">
+        <div class="participant-start-form">
+            <h2>Area Peserta</h2>
+            <p style="font-size: 0.9em; color: #888;">Isi form assessment untuk calon pengurus</p>
+            <button onclick="showParticipantForm()">Mulai Assessment</button>
+            <br><br>
+            <button onclick="showAnnouncementPage()" style="background: var(--info-color);">Lihat Pengumuman</button>
+        </div>
+    </div>
+
+    <!-- VIEW 2: Form Peserta -->
+    <div id="participantFormPage" class="container hidden">
+        <h1>Form Assessment Calon Pengurus</h1>
+        <form id="assessmentForm">
+            <div class="form-section">
+                <h2>Data Diri</h2>
+                <label for="participantName">Nama Lengkap:</label>
+                <input type="text" id="participantName" name="participantName" required>
+                <label for="participantEmail">Email Aktif:</label>
+                <input type="email" id="participantEmail" name="participantEmail" required>
+            </div>
+
+            <div class="form-section">
+                <h2>Pertanyaan Psikologi (Essay)</h2>
+                <div class="question-block"><label>1. Ceritakan tentang sebuah kegagalan atau tantangan terbesar yang pernah Anda alami, baik dalam lingkup pribadi, akademis, maupun organisasi. Apa yang Anda pelajari dari pengalaman tersebut dan bagaimana pengalaman itu membentuk Anda menjadi pribadi yang lebih baik hari ini?</label><textarea name="psy_1" required></textarea></div>
+                <div class="question-block"><label>2. Bayangkan Anda sedang bekerja dalam tim untuk sebuah proyek, dan ada satu anggota tim yang secara konsisten tidak menyelesaikan bagiannya tepat waktu, sehingga menghambat kemajuan seluruh tim. Bagaimana langkah-langkah konkret yang akan Anda ambil untuk menghadapi situasi ini? Jelaskan alasan di balik setiap langkah yang Anda ambil.</label><textarea name="psy_2" required></textarea></div>
+                <div class="question-block"><label>3. Jelaskan tentang sumber stres utama dalam hidup Anda dan bagaimana biasanya Anda mengelola atau mengatasi stres tersebut? Berikan contoh konkret aktivitas atau pola pikir yang membantu Anda tetap seimbang.</label><textarea name="psy_3" required></textarea></div>
+                <div class="question-block"><label>4. Deskripsikan sebuah nilai atau prinsip hidup yang Anda pegang teguh. Mengapa nilai tersebut penting bagi Anda, dan bagaimana Anda menerapkannya dalam pengambilan keputusan sehari-hari, terutama ketika dihadapkan pada pilihan yang sulit?</label><textarea name="psy_4" required></textarea></div>
+                <div class="question-block"><label>5. Ketika Anda merasa tidak termotivasi atau kurang bersemangat untuk mengerjakan tugas yang penting namun kurang Anda sukai, apa yang biasanya Anda lakukan untuk membangkitkan kembali motivasi tersebut? Ceritakan strategi pribadi yang efektif untuk Anda.</label><textarea name="psy_5" required></textarea></div>
+            </div>
+
+            <div class="form-section">
+                <h2>Pertanyaan Kepemimpinan (Essay)</h2>
+                <div class="question-block"><label>1. Menurut Anda, apa perbedaan mendasar antara menjadi seorang *pemimpin* (leader) dan seorang *pemimpin* (boss)? Dalam konteks komunitas sukarela seperti Pionir Asa, manakah yang lebih dibutuhkan dan mengapa? Berikan contoh perilaku dari masing-masing peran tersebut.</label><textarea name="lead_1" required></textarea></div>
+                <div class="question-block"><label>2. Bayangkan Anda adalah seorang koordinator divisi dan Anda memiliki sebuah ide untuk program baru yang Anda yakini akan sangat bermanfaat. Namun, ketika Anda mempresentasikannya kepada tim, sebagian besar anggota menunjukkan keraguan atau bahkan menolak ide tersebut. Langkah-langkah apa yang akan Anda lakukan untuk memimpin tim melalui situasi ini?</label><textarea name="lead_2" required></textarea></div>
+                <div class="question-block"><label>3. Seorang pemimpin juga harus mampu mengembangkan orang lain. Jika Anda diberi tanggung jawab atas seorang anggota baru yang masih sangat pemula dan kurang percaya diri, bagaimana pendekatan Anda untuk membimbing, mengembangkan kemampuan, dan membangun kepercayaan dirinya?</label><textarea name="lead_3" required></textarea></div>
+                <div class="question-block"><label>4. "Kegagalan delegasi adalah salah satu penyebab utama kelelahan seorang pemimpin." Setujukah Anda dengan pernyataan ini? Jelaskan alasan Anda dan ceritakan bagaimana Anda akan memastikan tugas-tugas dapat didelegasikan dengan efektif dan adil kepada anggota tim Anda.</label><textarea name="lead_4" required></textarea></div>
+                <div class="question-block"><label>5. Dalam sebuah organisasi, terkadang harus ada keputusan sulit yang tidak populer di mata sebagian anggota, tetapi harus diambil demi kebaikan organisasi secara keseluruhan. Bagaimana Anda akan mengambil dan mengomunikasikan keputusan sulit seperti itu kepada tim Anda?</label><textarea name="lead_5" required></textarea></div>
+            </div>
+
+            <div class="form-section">
+                <h2>Pertanyaan Kontribusi (Essay)</h2>
+                <div class="question-block"><label>1. Selain mengikuti kegiatan rutin, apa ide kreatif atau inovatif yang Anda miliki untuk dapat berkontribusi pada divisi pilihan Anda? Jelaskan ide tersebut secara singkat, mengapa Anda pikir ide itu penting, dan langkah awal apa yang akan Anda ambil untuk mewujudkannya.</label><textarea name="cont_1" required></textarea></div>
+                <div class="question-block"><label>2. Kontribusi tidak selalu berupa ide besar. Deskripsikan peran atau tugas kecil yang mungkin tidak terlihat oleh banyak orang, tetapi menurut Anda sangat krusial untuk kelancaran sebuah divisi atau organisasi. Mengapa Anda bersedia melakukan tugas tersebut?</label><textarea name="cont_2" required></textarea></div>
+                <div class="question-block"><label>3. Setiap orang memiliki keahlian atau bakat unik. Apakah keahlian spesifik yang Anda miliki (bisa terkait hobi, pengalaman, atau kemampuan teknis) yang menurut Anda bisa bermanfaat dan dapat Anda sumbangkan untuk kemajuan Pionir Asa, meskipun keahlian tersebut tidak langsung terkait dengan deskripsi divisi yang Anda lamar?</label><textarea name="cont_3" required></textarea></div>
+                <div class="question-block"><label>4. Menjaga semangat dan motivasi dalam sebuah komunitas jangka panjang adalah sebuah tantangan. Menurut Anda, peran apa yang dapat Anda mainkan untuk membantu menciptakan dan mempertahankan lingkungan yang positif, mendukung, dan menggembirakan bagi sesama pengurus Pionir Asa?</label><textarea name="cont_4" required></textarea></div>
+                <div class="question-block"><label>5. "Bergabung dalam organisasi adalah tentang memberi, bukan hanya menerima." Bagaimana Anda menafsirkan kalimat tersebut dalam konteks kontribusi Anda di Pionir Asa? Ceritakan bagaimana Anda akan menyeimbangkan antara memberikan kontribusi terbaik Anda dengan tetap terbuka untuk belajar dan menerima ilmu dari komunitas.</label><textarea name="cont_5" required></textarea></div>
+            </div>
+            
+            <button type="submit" class="success">Kirim Jawaban & Dinilai Otomatis</button>
+            <button type="button" class="danger" onclick="showLandingPage()">Batal</button>
+        </form>
+    </div>
+
+    <!-- VIEW 3: Dashboard Admin -->
+    <div id="adminDashboardPage" class="container hidden">
+        <div class="admin-nav">
+            <h2>Dashboard Admin Assessment</h2>
+            <button onclick="logoutAdmin()" class="danger">Logout Admin</button>
+        </div>
+
+        <div class="card">
+            <h2>Pengelolaan Pengumuman</h2>
+            <p>Buat atau perbarui pengumuman yang akan dilihat oleh peserta.</p>
+            <label for="announcementText">Teks Pengumuman:</label>
+            <textarea id="announcementText" rows="4" placeholder="Tulis pengumuman di sini..."></textarea>
+            <button onclick="saveAnnouncement()">Simpan Pengumuman</button>
+        </div>
+
+        <div class="card">
+            <h2>Daftar Peserta & Penilaian</h2>
+            <table id="participantTable">
+                <thead><tr><th>Nama</th><th>Email</th><th>Total Nilai</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="participantTableBody"><tr><td colspan="5" class="loading">Memuat data...</td></tr></tbody>
+            </table>
+        </div>
+        
+        <div class="card">
+            <h2>Dashboard Top 10 Peserta</h2>
+            <table id="topTenTable">
+                <thead><tr><th>Peringkat</th><th>Nama</th><th>Total Nilai</th><th>Status</th></tr></thead>
+                <tbody id="topTenTableBody"><tr><td colspan="4" class="loading">Memuat data...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- VIEW 4: Halaman Pengumuman untuk Peserta -->
+    <div id="announcementPage" class="container hidden">
+        <h1>Pengumuman Hasil Assessment</h1>
+        <div id="announcementDisplay" class="announcement-box">
+            <p class="loading">Memuat pengumuman...</p>
+        </div>
+        <p style="text-align: center;">Cek pengumuman secara berkala. Terima kasih atas partisipasi Anda.</p>
+        <button onclick="showLandingPage()">Kembali ke Halaman Utama</button>
+    </div>
+
+<script>
+    // --- KONFIGURASI & DATA ---
+    // NOTE: Ini adalah simulasi. Data tersimpan di localStorage browser.
+    const STORAGE_KEY_PARTICIPANTS = 'asajiwa_participants_v2';
+    const STORAGE_KEY_ANNOUNCEMENT = 'asajiwa_announcement_v2';
+    
+    // --- KREDENSIAL ADMIN ---
+    const ADMIN_EMAIL = "asajiwafoundation@gmail.com";
+    const ADMIN_PASSWORD = "ASAJIWAFOUNDATION";
+
+    // --- FUNGSI UTILITAS ---
+    function showPage(pageId) {
+        document.querySelectorAll('.container').forEach(page => page.classList.add('hidden'));
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    function saveToLocalStorage(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function loadFromLocalStorage(key, defaultValue = null) {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+    }
+    
+    // --- FUNGSI HALAMAN UTAMA (LANDING PAGE) ---
+    function showLandingPage() {
+        showPage('landingPage');
+        document.getElementById('loginError').style.display = 'none'; // Sembunyikan error saat kembali ke landing
+        document.getElementById('adminEmailInput').value = '';
+        document.getElementById('adminPasswordInput').value = '';
+    }
+
+    function adminLogin() {
+        const email = document.getElementById('adminEmailInput').value;
+        const password = document.getElementById('adminPasswordInput').value;
+        const errorDiv = document.getElementById('loginError');
+
+        if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+            alert('Login Admin Berhasil! Selamat datang di Dashboard.');
+            loadAdminDashboard();
+        } else {
+            errorDiv.style.display = 'block'; // Tampilkan pesan error
+        }
+    }
+
+    function showParticipantForm() {
+        showPage('participantFormPage');
+    }
+    
+    function showAnnouncementPage() {
+        showPage('announcementPage');
+        const announcement = loadFromLocalStorage(STORAGE_KEY_ANNOUNCEMENT, 'Belum ada pengumuman terkini.');
+        document.getElementById('announcementDisplay').innerHTML = `<p>${announcement.replace(/\n/g, '<br>')}</p>`;
+    }
+
+    // --- FUNGSI FORM PESERTA & SIMULASI PENILAIAN OTOMATIS ---
+    document.getElementById('assessmentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const participantData = {
+            id: Date.now(),
+            name: formData.get('participantName'),
+            email: formData.get('participantEmail'),
+            answers: {},
+            scores: { psy: 0, lead: 0, cont: 0, total: 0 },
+            status: 'pending',
+            evaluated: false
+        };
+
+        for (let [key, value] of formData.entries()) {
+            if (key !== 'participantName' && key !== 'participantEmail') {
+                participantData.answers[key] = value;
+            }
+        }
+
+        // --- SIMULASI PROSES PENILAIAN OTOMATIS ---
+        alert('Sedang memproses jawaban Anda dengan AI... (Ini adalah simulasi)');
+        
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerText;
+        submitButton.innerText = 'Memproses...';
+        submitButton.disabled = true;
+
+        await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
+        
+        // --- HASIL SIMULASI (NILAI ACAK) ---
+        participantData.scores.psy = Math.floor(Math.random() * 41) + 60; // 60-100
+        participantData.scores.lead = Math.floor(Math.random() * 41) + 60; // 60-100
+        participantData.scores.cont = Math.floor(Math.random() * 41) + 60; // 60-100
+        participantData.scores.total = participantData.scores.psy + participantData.scores.lead + participantData.scores.cont;
+        participantData.evaluated = true;
+
+        const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
+        participants.push(participantData);
+        saveToLocalStorage(STORAGE_KEY_PARTICIPANTS, participants);
+
+        submitButton.innerText = originalText;
+        submitButton.disabled = false;
+
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'simulated-result';
+        resultDiv.innerHTML = `
+            <h4>Hasil Penilaian Simulasi (Otomatis)</h4>
+            <p><strong>Nilai Psikologi:</strong> ${participantData.scores.psy}</p>
+            <p><strong>Nilai Kepemimpinan:</strong> ${participantData.scores.lead}</p>
+            <p><strong>Nilai Kontribusi:</strong> ${participantData.scores.cont}</p>
+            <p class="top-score"><strong>Total Nilai:</strong> ${participantData.scores.total}</p>
+            <p>Jawaban Anda telah disimpan. Admin akan segera mengupdate status kelulusan Anda.</p>
+        `;
+        e.target.appendChild(resultDiv);
+        e.target.querySelector('button[type="submit"]').disabled = true;
+    });
+
+    // --- FUNGSI DASHBOARD ADMIN ---
+    function loadAdminDashboard() {
+        showPage('adminDashboardPage');
+        renderParticipantTable();
+        renderTopTenTable();
+        loadAnnouncementForAdmin();
+    }
+    
+    function renderParticipantTable() {
+        const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
+        const tbody = document.getElementById('participantTableBody');
+        tbody.innerHTML = '';
+        if (participants.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada data peserta.</td></tr>';
+            return;
+        }
+        participants.forEach(p => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${p.name}</td>
+<td>${p.email}</td>
+                <td>${p.evaluated ? p.scores.total : 'Belum Dinilai'}</td>
+                <td><span class="status-badge status-${p.status}">${getStatusText(p.status)}</span></td>
+                <td><button onclick="updateStatus(${p.id})">Update Status</button></td>
+            `;
+        });
+    }
+    
+    function renderTopTenTable() {
+        const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
+        const evaluatedParticipants = participants
+            .filter(p => p.evaluated)
+            .sort((a, b) => b.scores.total - a.scores.total)
+            .slice(0, 10);
+
+        const tbody = document.getElementById('topTenTableBody');
+        tbody.innerHTML = '';
+        if (evaluatedParticipants.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Belum ada peserta yang dinilai.</td></tr>';
+            return;
+        }
+        evaluatedParticipants.forEach((p, index) => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${p.name}</td>
+                <td>${p.scores.total}</td>
+                <td><span class="status-badge status-${p.status}">${getStatusText(p.status)}</span></td>
+            `;
+        });
+    }
+
+    function getStatusText(status) {
+        switch(status) {
+            case 'pending': return 'Menunggu';
+            case 'rejected': return 'Tidak Lolos';
+            case 'accepted-t2': return 'Lolos Tahap 2';
+            case 'accepted-role': return 'Lolos Jabatan';
+            default: return 'Unknown';
+        }
+    }
+
+    function saveAnnouncement() {
+        const text = document.getElementById('announcementText').value;
+        saveToLocalStorage(STORAGE_KEY_ANNOUNCEMENT, text);
+        alert('Pengumuman berhasil disimpan!');
+    }
+
+    function loadAnnouncementForAdmin() {
+const announcement = loadFromLocalStorage(STORAGE_KEY_ANNOUNCEMENT, '');
+        document.getElementById('announcementText').value = announcement;
+    }
+    
+    function updateStatus(participantId) {
+        const participants = loadFromLocalStorage(STORAGE_KEY_PARTICIPANTS, []);
+        const participant = participants.find(p => p.id === participantId);
+        if (!participant) return;
+
+        const newStatus = prompt(`Update status untuk ${participant.name}.\nKetik salah satu:\n- pending\n- rejected\n- accepted-t2\n- accepted-role`, participant.status);
+        
+        if (newStatus && ['pending', 'rejected', 'accepted-t2', 'accepted-role'].includes(newStatus)) {
+            participant.status = newStatus;
+            saveToLocalStorage(STORAGE_KEY_PARTICIPANTS, participants);
+            alert('Status berhasil diperbarui!');
+            renderParticipantTable();
+            renderTopTenTable();
+        } else {
+            alert('Status tidak valid atau dibatalkan.');
+        }
+    }
+
+    function logoutAdmin() {
+        alert('Anda telah logout dari halaman Admin.');
+        showLandingPage();
+    }
+
+    // --- INISIALISASI AWAL ---
+    if (!localStorage.getItem(STORAGE_KEY_ANNOUNCEMENT)) {
+        saveToLocalStorage(STORAGE_KEY_ANNOUNCEMENT, "Selamat datang calon pengurus! Hasil assessment akan diumumkan melalui halaman ini. Pantau terus ya!");
+    }
+
+</script>
+
+</body>
+</html>
